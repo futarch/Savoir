@@ -58,7 +58,6 @@ def create_success_response(data: Any = None) -> Dict[str, Any]:
 def create_error_response(error: Union[Exception, str]) -> Dict[str, Any]:
     """Create an error response"""
     error_msg = str(error)
-    log.error(f"R2R error: {error_msg}")
     return R2RResponse(success=False, error=error_msg).to_dict()
 
 def handle_r2r_error(func):
@@ -68,42 +67,29 @@ def handle_r2r_error(func):
     This decorator will:
     1. Pass through R2RError exceptions
     2. Wrap other exceptions in R2RError
-    3. Log all errors with detailed information
     """
     @wraps(func)
     async def wrapper(*args, **kwargs):
         try:
-            # Log the function call
-            func_name = func.__name__
-            log.info(f"Calling R2R function: {func_name} with args: {args}, kwargs: {kwargs}")
-            
             # Execute the function
             result = await func(*args, **kwargs)
             
             # Check for error in the result
             if isinstance(result, dict) and not result.get("success", True):
                 error_msg = result.get("error", "Unknown error")
-                log.error(f"Error in {func_name}: {error_msg}")
                 if error_msg:
                     raise R2RError(error_msg)
                 else:
                     raise R2RError("Unknown error")
             
-            # Log successful result
-            log.info(f"R2R function {func_name} completed successfully")
             return result
             
         except R2RError as e:
-            # Log the R2RError with details
-            log.error(f"R2R error in {func.__name__}: {str(e)}")
+            # Pass through R2RError
             raise
             
         except Exception as e:
-            # Log the exception with details
-            import traceback
-            error_msg = str(e) if str(e) else "Unknown error"
-            log.error(f"Unexpected error in {func.__name__}: {error_msg}")
-            log.error(f"Traceback: {traceback.format_exc()}")
-            raise R2RError(error_msg) from e
+            # Wrap other exceptions in R2RError
+            raise R2RError(str(e))
             
     return wrapper 
