@@ -59,21 +59,6 @@ cp .env.example .env
 # Edit .env with your configuration
 ```
 
-## Configuration
-
-1. Set up your WhatsApp Business API credentials
-2. Configure your OpenAI API key
-3. Adjust knowledge garden settings in the configuration file
-
-## Usage
-
-1. Start the bot:
-```bash
-python run_update.py
-```
-
-2. Connect your WhatsApp number to the bot
-
 ## Development
 
 The bot is built with:
