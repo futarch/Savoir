@@ -31,8 +31,7 @@ async def handle_create_document(
         response = await r2r_client.create_document(content, metadata)
         
         if not response.get("success"):
-            error = response.get("error", "Failed to create document")
-            raise R2RError(error)
+            raise R2RError(response.get("error", "Failed to create document"))
             
         return create_success_response(response.get("data"))
         
@@ -59,8 +58,7 @@ async def handle_add_document_to_collection(
         response = await r2r_client.add_document_to_collection(document_id, collection_id)
         
         if not response.get("success"):
-            error = response.get("error", "Failed to add document to collection")
-            raise R2RError(error)
+            raise R2RError(response.get("error", "Failed to add document to collection"))
             
         return create_success_response(response.get("data"))
         
@@ -87,14 +85,10 @@ async def handle_add_document_to_collections(
     if not collection_ids:
         raise R2RError("Collection IDs are required")
         
-    # Add document to each collection
     for collection_id in collection_ids:
         response = await r2r_client.add_document_to_collection(collection_id, document_id)
         if not response.get("success"):
-            error = response.get("error")
-            if error:
-                raise R2RError(error)
-            raise R2RError("Failed to add document to collection")
+            raise R2RError(response.get("error", "Failed to add document to collection"))
         
     return {
         "success": True,

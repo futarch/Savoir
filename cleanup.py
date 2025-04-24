@@ -5,24 +5,16 @@ from pathlib import Path
 
 def cleanup_python_cache():
     """Remove Python cache files and directories."""
-    # Get the current directory
     current_dir = Path('.')
+    patterns = ['__pycache__', '*.pyc', '*.pyo', '*.pyd', '*.log']
     
-    # Find and remove __pycache__ directories
-    for cache_dir in current_dir.rglob('__pycache__'):
-        print(f"Removing {cache_dir}")
-        shutil.rmtree(cache_dir)
-    
-    # Find and remove .pyc, .pyo, .pyd files
-    for ext in ['*.pyc', '*.pyo', '*.pyd']:
-        for cache_file in current_dir.rglob(ext):
-            print(f"Removing {cache_file}")
-            cache_file.unlink()
-    
-    # Find and remove log files
-    for log_file in current_dir.rglob('*.log'):
-        print(f"Removing {log_file}")
-        log_file.unlink()
+    for pattern in patterns:
+        for item in current_dir.rglob(pattern):
+            print(f"Removing {item}")
+            if item.is_dir():
+                shutil.rmtree(item)
+            else:
+                item.unlink()
     
     print("Python cache and log files cleanup completed!")
 

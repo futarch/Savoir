@@ -58,7 +58,7 @@ class R2RClient:
         if not self.api_key:
             raise ValueError("R2R_API_KEY environment variable is not set")
         
-        self.base_url = base_url or "https://api.sciphi.ai/v3"
+        self.base_url = base_url or BASE_URL
         self._session = None
         self.documents = Documents(self)
     

@@ -33,8 +33,7 @@ async def handle_create_collection(name: str, description: Optional[str] = None)
         response = await r2r_client.create_collection(name, description)
         
         if not response.get("success"):
-            error = response.get("error", "Failed to create collection")
-            raise R2RError(error)
+            raise R2RError(response.get("error", "Failed to create collection"))
             
         return create_success_response(response.get("data"))
         
@@ -58,8 +57,7 @@ async def handle_list_user_collections(offset: int = 0, limit: int = 100) -> Dic
         response = await r2r_client.collections(offset=offset, limit=limit)
         
         if not response.get("success"):
-            error = response.get("error", "Failed to list collections")
-            raise R2RError(error)
+            raise R2RError(response.get("error", "Failed to list collections"))
             
         return create_success_response(response.get("data"))
         

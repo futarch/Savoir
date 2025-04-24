@@ -1,17 +1,26 @@
-import sys
-import os
+#!/usr/bin/env python3
 
-# Add the current directory to the Python path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-# Import the assistant instance
+import os, sys, logging
+from dotenv import load_dotenv
 from app.domain.openai.assistant import assistant
 
-# Run the update_assistant method
-if __name__ == "__main__":
+# Add current directory to Python path and configure logging
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
+
+# Load environment variables
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env'), override=True)
+
+def main():
     try:
-        print("Starting assistant update process...")
+        log.info("Starting assistant update process...")
         updated_assistant = assistant.update_assistant()
-        print(f"Successfully updated assistant with ID: {updated_assistant.id}")
+        log.info(f"Successfully updated assistant with ID: {updated_assistant.id}")
+        return updated_assistant
     except Exception as e:
-        print(f"Failed to update assistant: {str(e)}") 
+        log.error(f"Failed to update assistant: {str(e)}")
+        raise
+
+if __name__ == "__main__":
+    main() 

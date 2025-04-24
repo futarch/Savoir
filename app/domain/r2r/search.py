@@ -1,8 +1,7 @@
 import logging
 from typing import List, Dict, Any, Optional
 from .client import r2r_client
-from .errors import create_success_response, create_error_response, SearchError, handle_r2r_error, R2RError
-from .utils import make_request, format_response
+from .errors import create_success_response, SearchError, handle_r2r_error
 
 log = logging.getLogger(__name__)
 
@@ -44,20 +43,13 @@ def _format_search_results(results: List[Dict[str, Any]]) -> List[Dict[str, Any]
     Returns:
         List of formatted results with standardized fields
     """
-    formatted_results = []
-    
-    for result in results:
-        if isinstance(result, dict):
-            formatted_result = {
-                "content": result.get("content", ""),
-                "metadata": result.get("metadata", {}),
-                "score": result.get("score", 0.0),
-                "collection_id": result.get("collection_id", ""),
-                "document_id": result.get("document_id", "")
-            }
-            formatted_results.append(formatted_result)
-    
-    return formatted_results
+    return [{
+        "content": result.get("content", ""),
+        "metadata": result.get("metadata", {}),
+        "score": result.get("score", 0.0),
+        "collection_id": result.get("collection_id", ""),
+        "document_id": result.get("document_id", "")
+    } for result in results if isinstance(result, dict)]
 
 @handle_r2r_error
 async def handle_search_with_names(
@@ -78,21 +70,13 @@ async def handle_search_with_names(
         raise SearchError("Search query cannot be empty")
         
     try:
-        # Get first collection ID if provided
-        collection_id = None
-        if collection_names and collection_names[0]:
-            collection_id = await _get_collection_id(collection_names[0])
-        
+        collection_id = await _get_collection_id(collection_names[0] if collection_names else None)
         log.info(f"Performing search with query: '{query}', collection_id: {collection_id}")
         
-        # Perform the search
         search_results = await r2r_client.search(query)
-        
         if not search_results.get("success"):
-            error = search_results.get("error", "Search failed")
-            raise SearchError(error)
+            raise SearchError(search_results.get("error", "Search failed"))
         
-        # Format the results
         results = search_results.get("data", {}).get("results", [])
         formatted_results = _format_search_results(results)
         
@@ -119,21 +103,13 @@ async def handle_rag_with_names(
         Dictionary containing RAG response and success status
     """
     try:
-        # Get first collection ID if provided
-        collection_id = None
-        if collection_names and collection_names[0]:
-            collection_id = await _get_collection_id(collection_names[0])
-        
+        collection_id = await _get_collection_id(collection_names[0] if collection_names else None)
         log.info(f"Performing RAG with query: '{query}', collection_id: {collection_id}")
         
-        # Perform RAG
         rag_results = await r2r_client.rag(query, collection_id)
-        
         if not rag_results.get("success"):
-            error = rag_results.get("error", "RAG failed")
-            raise SearchError(error)
+            raise SearchError(rag_results.get("error", "RAG failed"))
         
-        # Extract and format results
         data = rag_results.get("data", {})
         response_data = {
             "answer": data.get("answer", ""),

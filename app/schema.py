@@ -50,15 +50,10 @@ class Metadata(WhatsAppBaseModel):
     @validator('display_phone_number')
     def validate_phone_number(cls, v):
         """Ensure phone number contains only digits."""
-        # Remove any non-digit characters
-        digits_only = ''.join(filter(str.isdigit, v))
-        
-        # Check if it's a valid length (1-15 digits)
-        if not (1 <= len(digits_only) <= 15):
+        digits = ''.join(filter(str.isdigit, v))
+        if not (1 <= len(digits) <= 15):
             raise ValueError("Phone number must have between 1 and 15 digits")
-            
-        # Return the digits-only version
-        return digits_only
+        return digits
 
 
 class Value(WhatsAppBaseModel):
@@ -96,15 +91,10 @@ class User(WhatsAppBaseModel):
     @validator('phone')
     def validate_phone_number(cls, v):
         """Ensure phone number contains only digits."""
-        # Remove any non-digit characters
-        digits_only = ''.join(filter(str.isdigit, v))
-        
-        # Check if it's a valid length (1-15 digits)
-        if not (1 <= len(digits_only) <= 15):
+        digits = ''.join(filter(str.isdigit, v))
+        if not (1 <= len(digits) <= 15):
             raise ValueError("Phone number must have between 1 and 15 digits")
-            
-        # Return the digits-only version
-        return digits_only
+        return digits
 
 
 class UserMessage(WhatsAppBaseModel):

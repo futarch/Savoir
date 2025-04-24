@@ -1,7 +1,4 @@
-import os
-import json
-import logging
-import tempfile
+import os, json, logging, tempfile, requests
 from pathlib import Path
 from typing import BinaryIO
 from openai import OpenAI
@@ -22,12 +19,7 @@ def authenticate_user_by_phone_number(phone_number: str) -> User:
     for any incoming phone number.
     """
     log.info(f"Authenticating user with phone number: {phone_number}")
-    user = User(
-        id="1",  # Default user ID as string
-        phone=phone_number
-    )
-    log.info(f"Created default user: id={user.id} phone='{user.phone}'")
-    return user
+    return User(id="1", phone=phone_number)
 
 def download_file_from_facebook(file_id: str, file_type: str, mime_type: str) -> str | None:
     """
@@ -61,8 +53,7 @@ def download_file_from_facebook(file_id: str, file_type: str, mime_type: str) ->
             return None
             
         # Extract the file URL from the response
-        file_data = response.json()
-        file_url = file_data.get('url')
+        file_url = response.json().get('url')
         if not file_url:
             log.error("File URL not found in response")
             return None
@@ -74,9 +65,7 @@ def download_file_from_facebook(file_id: str, file_type: str, mime_type: str) ->
             return None
             
         # Create a temporary file to store the downloaded content
-        temp_dir = tempfile.gettempdir()
-        file_extension = mime_type.split('/')[-1]
-        temp_file_path = Path(temp_dir) / f"{file_id}.{file_extension}"
+        temp_file_path = Path(tempfile.gettempdir()) / f"{file_id}.{mime_type.split('/')[-1]}"
         
         with open(temp_file_path, 'wb') as f:
             f.write(file_response.content)
