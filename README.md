@@ -6,6 +6,22 @@ A WhatsApp bot that helps you create and grow your personal knowledge garden thr
 
 Savoir is an intelligent WhatsApp bot that transforms your daily conversations into a structured knowledge garden. It helps you capture, organize, and connect information through natural chat interactions, making knowledge management effortless and enjoyable. Share and collaborate on knowledge gardens with friends, colleagues, or the broader community.
 
+## Project Status
+
+⚠️ **Work in Progress**
+
+This project is currently in active development and has several areas that need improvement:
+
+- Not all R2R API calls are working properly
+- Some features are incomplete or in development
+- The knowledge garden structure needs refinement
+- WhatsApp integration requires additional testing
+- Performance optimizations are needed
+- Documentation needs expansion
+- Currently limited to single-user mode (multi-user support coming soon)
+
+We are actively working on these improvements and will update the project regularly. Your feedback and contributions are welcome!
+
 ## Features
 
 - 🤖 WhatsApp Integration: Interact with your knowledge garden through familiar WhatsApp chats
