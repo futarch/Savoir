@@ -1,7 +1,7 @@
 import os
 import logging
 from dotenv import load_dotenv
-from .assistant import update_assistant
+from .assistant import assistant
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -17,12 +17,13 @@ def main():
         log.info("Starting assistant update process...")
         
         # Update the assistant with the latest instructions and tools
-        updated_assistant = update_assistant()
+        updated_assistant = assistant.update_assistant()
         
         log.info(f"Successfully updated assistant with ID: {updated_assistant.id}")
-        
+        return updated_assistant
     except Exception as e:
         log.error(f"Failed to update assistant: {str(e)}")
+        raise
 
 if __name__ == "__main__":
     main() 

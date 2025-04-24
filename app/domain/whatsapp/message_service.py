@@ -2,7 +2,7 @@ import os
 import logging
 import aiohttp
 from dotenv import load_dotenv
-from ..openai.assistant import run as run_assistant
+from ..openai.assistant import assistant
 from app.schema import User
 
 # Load environment variables
@@ -61,7 +61,7 @@ async def respond_and_send_message(user_message: str, user: User, thread_id: str
         log.info(f"Processing message for user {user.phone}: {user_message}")
         
         # Get the response from the assistant
-        response = await run_assistant(
+        response = await assistant.run(
             user_message=user_message, 
             user_id=str(user.id),
             thread_id=thread_id
