@@ -64,7 +64,7 @@ class R2RClient:
     
     async def _get_session(self) -> aiohttp.ClientSession:
         """Get or create an aiohttp session."""
-        if self._session is None:
+        if self._session is None or self._session.closed:
             self._session = aiohttp.ClientSession(headers={
                 "Authorization": f"Bearer {self.api_key}"
             })
@@ -72,11 +72,13 @@ class R2RClient:
     
     async def _make_request(self, method: str, endpoint: str, **kwargs) -> Dict[str, Any]:
         """Make a request to the R2R API."""
-        session = await self._get_session()
+        headers = kwargs.pop('headers', {})
+        headers['Authorization'] = f'Bearer {self.api_key}'
         url = f"{self.base_url}{endpoint}"
         
+        session = await self._get_session()
         try:
-            async with await session.request(method, url, **kwargs) as response:
+            async with session.request(method, url, headers=headers, **kwargs) as response:
                 response_text = await response.text()
                 
                 try:
@@ -177,7 +179,7 @@ class R2RClient:
 
     async def close(self):
         """Close the client session."""
-        if self._session:
+        if self._session and not self._session.closed:
             await self._session.close()
             self._session = None
 

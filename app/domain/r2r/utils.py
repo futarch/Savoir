@@ -136,11 +136,10 @@ async def make_request(
     Raises:
         R2RError: If the request fails
     """
-    url = f"{BASE_URL}/{endpoint.lstrip('/')}"
-    
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with await session.request(
+    async with aiohttp.ClientSession() as session:
+        try:
+            url = f"{BASE_URL}/{endpoint.lstrip('/')}"
+            async with session.request(
                 method=method,
                 url=url,
                 headers=headers,
@@ -155,10 +154,10 @@ async def make_request(
                     
                 return response_data
                 
-    except aiohttp.ClientError as e:
-        raise R2RError(f"Request failed: {str(e)}")
-    except Exception as e:
-        raise R2RError(f"Unexpected error: {str(e)}")
+        except aiohttp.ClientError as e:
+            raise R2RError(f"Request failed: {str(e)}")
+        except Exception as e:
+            raise R2RError(f"Unexpected error: {str(e)}")
 
 def format_response(data: Any) -> Dict[str, Any]:
     """Format API response data.

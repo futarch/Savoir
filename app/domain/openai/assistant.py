@@ -141,7 +141,7 @@ class OpenAIAssistant:
     
     async def handle_tool_calls(self, thread_id: str, run_id: str):
         try:
-            run = await this.async_client.beta.threads.runs.retrieve(
+            run = await self.async_client.beta.threads.runs.retrieve(
                 thread_id=thread_id,
                 run_id=run_id
             )
@@ -164,18 +164,26 @@ class OpenAIAssistant:
                     
                     log.info(f"Function {function_name} returned: {function_result}")
                     
+                    # Convert the result to a string representation
+                    if isinstance(function_result, (dict, list)):
+                        # For complex objects, use JSON to convert to string
+                        output_str = json.dumps(function_result)
+                    else:
+                        # For simple types, use str() to convert to string
+                        output_str = str(function_result)
+                    
                     tool_outputs.append({
                         "tool_call_id": tool_call.id,
-                        "output": json.dumps(function_result)
+                        "output": output_str
                     })
                 else:
                     log.error(f"Unknown function {function_name}")
                     tool_outputs.append({
                         "tool_call_id": tool_call.id,
-                        "output": json.dumps({"error": f"Unknown function {function_name}"})
+                        "output": f"Error: Unknown function {function_name}"
                     })
             
-            await this.async_client.beta.threads.runs.submit_tool_outputs(
+            await self.async_client.beta.threads.runs.submit_tool_outputs(
                 thread_id=thread_id,
                 run_id=run_id,
                 tool_outputs=tool_outputs
@@ -189,7 +197,7 @@ class OpenAIAssistant:
     
     async def has_active_run(self, thread_id: str):
         try:
-            runs = await this.async_client.beta.threads.runs.list(
+            runs = await self.async_client.beta.threads.runs.list(
                 thread_id=thread_id,
                 limit=1,
                 order="desc"
@@ -237,54 +245,54 @@ class OpenAIAssistant:
         retry_delay = 1
         
         for _ in range(max_retries):
-            run_status = await this.get_run_status(thread_id, run_id)
+            run_status = await self.get_run_status(thread_id, run_id)
             
             if not run_status["success"]:
-                return this._create_error_response()
+                return self._create_error_response()
                 
             status = run_status["status"]
             
             if status == "completed":
-                messages = await this.get_thread_messages(thread_id)
+                messages = await self.get_thread_messages(thread_id)
                 if messages["success"]:
-                    return this._create_success_response(thread_id, messages["last_message"])
-                return this._create_error_response()
+                    return self._create_success_response(thread_id, messages["last_message"])
+                return self._create_error_response()
                 
             elif status == "requires_action":
-                tool_result = await this.handle_tool_calls(thread_id, run_id)
+                tool_result = await self.handle_tool_calls(thread_id, run_id)
                 if not tool_result["success"]:
-                    return this._create_error_response()
+                    return self._create_error_response()
                     
             elif status in ["failed", "cancelled", "expired"]:
-                return this._create_error_response()
+                return self._create_error_response()
                 
             await asyncio.sleep(retry_delay)
             
-        return this._create_error_response("The request timed out. Please try again.")
+        return self._create_error_response("The request timed out. Please try again.")
     
     async def run(self, user_message: str, user_id: str, thread_id: str = None):
         try:
-            if await this.has_active_run(thread_id):
-                return this._create_busy_response()
+            if await self.has_active_run(thread_id):
+                return self._create_busy_response()
                 
-            thread_result = await this.get_or_create_thread(user_id)
+            thread_result = await self.get_or_create_thread(user_id)
             if not thread_result["success"]:
-                return this._create_error_response()
+                return self._create_error_response()
                 
             thread_id = thread_result["thread_id"]
             
-            message_result = await this.add_message_to_thread(thread_id, user_message)
+            message_result = await self.add_message_to_thread(thread_id, user_message)
             if not message_result["success"]:
-                return this._create_error_response()
+                return self._create_error_response()
                 
-            run_result = await this.run_assistant(thread_id)
+            run_result = await self.run_assistant(thread_id)
             if not run_result["success"]:
-                return this._create_error_response()
+                return self._create_error_response()
                 
-            return await this._process_run(thread_id, run_result["run_id"])
+            return await self._process_run(thread_id, run_result["run_id"])
             
         except Exception as e:
             log.error(f"Error in run: {str(e)}")
-            return this._create_error_response()
+            return self._create_error_response()
 
 assistant = OpenAIAssistant()

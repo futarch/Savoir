@@ -1,12 +1,16 @@
 import json
 import logging
-from ..r2r.handlers import (
-    handle_create_collection,
+from ..r2r.documents import (
     handle_create_document,
-    handle_add_document_to_collection,
-    handle_list_user_collections,
-    handle_search,
-    handle_rag
+    handle_add_document_to_collection
+)
+from ..r2r.collections import (
+    handle_create_collection,
+    handle_list_user_collections
+)
+from ..r2r.search import (
+    handle_search_with_names as handle_search,
+    handle_rag_with_names as handle_rag
 )
 
 log = logging.getLogger(__name__)
