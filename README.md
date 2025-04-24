@@ -33,12 +33,13 @@ Savoir is an intelligent WhatsApp bot that transforms your daily conversations i
 - pip (Python package manager)
 - WhatsApp Business API access
 - OpenAI API key
+- R2R API key
 
 ## Installation
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/futarch/Savoir.git
 cd Savoir
 ```
 
@@ -56,8 +57,31 @@ pip install -r requirements.txt
 4. Set up environment variables:
 ```bash
 cp .env.example .env
-# Edit .env with your configuration
 ```
+
+5. Configure your environment variables in `.env`:
+```
+R2R_API_KEY=your_r2r_api_key_here
+WHATSAPP_API_KEY=your_whatsapp_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
+WHATSAPP_VERIFICATION_TOKEN=your_whatsapp_verification_token_here
+WHATSAPP_PHONE_NUMBER_ID=your_whatsapp_phone_number_id_here
+OPENAI_ASSISTANT_ID=your_openai_assistant_id_here
+```
+
+## Documentation & Resources
+
+### WhatsApp Cloud API
+- [Getting Started Guide](https://developers.facebook.com/docs/whatsapp/getting-started/signing-up)
+- [Sample App Endpoints](https://developers.facebook.com/docs/whatsapp/cloud-api/guides/sample-app-endpoints)
+- [Webhook Setup](https://developers.facebook.com/docs/whatsapp/cloud-api/get-started-for-tech-providers)
+
+### OpenAI
+- [API Reference](https://platform.openai.com/docs/api-reference/introduction)
+- [Assistants API](https://platform.openai.com/docs/api-reference/assistants)
+
+### R2R
+- [Documentation](https://r2r-docs.sciphi.ai/documentation)
 
 ## Development
 
