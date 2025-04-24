@@ -22,6 +22,39 @@ This project is currently in active development and has several areas that need 
 
 We are actively working on these improvements and will update the project regularly. Your feedback and contributions are welcome!
 
+## Technical Architecture
+
+### Message Flow
+
+1. **WhatsApp Integration**
+   - Receives messages through WhatsApp Cloud API webhook
+   - Validates incoming webhook requests
+   - Extracts message content and sender information
+
+2. **OpenAI Assistant Processing**
+   - Forwards message to OpenAI Assistant API
+   - Assistant processes natural language using GPT-4.1
+   - Determines intent and required actions (tools calling)
+   - Generates contextual responses
+
+3. **R2RIntegration**
+   - Stores and retrieves information
+   - Creates connections between related concepts
+   - User management
+
+4. **Response Generation**
+   - OpenAI Assistant use R2R knowledge
+   - Formats response for WhatsApp
+   - Sends response back through WhatsApp Cloud API
+
+### Key Components
+
+- **FastAPI Backend**: Handles webhook endpoints and message routing
+- **OpenAI Assistant**: Manages conversation context and natural language understanding
+- **R2R Service**: Manages knowledge storage and retrieval
+- **WhatsApp Cloud API**: Handles message delivery and reception
+- **PostgreSQL Database**: Stores user data and conversation history
+
 ## Features
 
 - 🤖 WhatsApp Integration: Interact with your knowledge garden through familiar WhatsApp chats
